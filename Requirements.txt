@@ -1,0 +1,9 @@
+Technical requirements:
+1. C# lang
+2. DB (picked SQLite) + ORM (picked EF Core)
+3. desktop app (picked WPF)
+
+Functional requirements:
+1. CRUD for todos per day
+2. view todos for a chosen day
+3.* notifications about upcoming todos
