@@ -17,12 +17,11 @@ namespace Todo.Database
         [MaxLength(255)]
         public string Description { get; set; }
 
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
 
         [NotMapped]
         private DateTime _target;
-
-        public DateTime Target 
+        public DateTime Target
         {
             get
             {
@@ -32,6 +31,12 @@ namespace Todo.Database
             {
                 _target = new DateTime(value.Year, value.Month, value.Day);
             }
+        }
+
+        public TodoItem(string title, DateTime target)
+        {
+            Title = title;
+            Target = target;
         }
     }
 }

@@ -5,8 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Todo.UI.Views"
         mc:Ignorable="d"
-        Title="ShellView" Height="450" Width="800">
+        Title="Todo" Height="800" Width="450">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
         
+        <!-- Row 1 -->
+        <DatePicker Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="Target" />
+
+        <!-- Row 2 -->
+        <TextBox Grid.Row="2" Grid.Column="1" x:Name="Title" MinWidth="250" />
+        <Button Grid.Row="2" Grid.Column="2" Content="Add Todo" x:Name="AddTodo" />
     </Grid>
 </Window>
