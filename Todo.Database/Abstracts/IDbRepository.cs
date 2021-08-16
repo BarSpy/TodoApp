@@ -12,5 +12,6 @@ namespace Todo.Database.Abstracts
         Task<T> InsertAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task<T> GetSingleAsync(Guid key);
     }
 }

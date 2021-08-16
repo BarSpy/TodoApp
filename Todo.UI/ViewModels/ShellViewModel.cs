@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +29,8 @@ namespace Todo.UI.ViewModels
         public DateTime Target
         {
             get { return _target; }
-            set 
-            { 
+            set
+            {
                 _target = value;
                 LoadTodoItems();
             }
@@ -60,10 +61,27 @@ namespace Todo.UI.ViewModels
         {
             var items = _todoItemsService
                 .GetAllForDate(Target)
-                .Select(dbItem => new TodoItemModel(dbItem));
+                .ToList()
+                .Select(dbItem => new TodoItemModel(dbItem))
+                .Select(item =>
+                {
+                    item.PropertyChanged += PropChanged;
+                    return item;
+                });
 
             TodoItems = new BindableCollection<TodoItemModel>(items);
             NotifyOfPropertyChange(() => TodoItems);
+        }
+
+        private void PropChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is TodoItemModel item)
+            {
+                var dbItem = _todoItemsService.GetSingleAsync(item.Id).Result;
+                dbItem.Completed = item.Completed;
+                dbItem.Title = item.Title;
+                _todoItemsService.UpdateAsync(dbItem).GetAwaiter().GetResult();
+            }
         }
     }
 }

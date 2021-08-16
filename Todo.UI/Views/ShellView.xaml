@@ -6,6 +6,17 @@
         xmlns:local="clr-namespace:Todo.UI.Views"
         mc:Ignorable="d"
         Title="Todo" Height="800" Width="450">
+
+    <Window.Resources>
+        <Style TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Completed}" Value="true">
+                    <Setter Property="Background" Value="#FFA3EAA3" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
@@ -29,8 +40,12 @@
         <Button Grid.Row="2" Grid.Column="2" Content="Add Todo" x:Name="AddTodo" />
         
         <!-- Row 3 -->
-        <DataGrid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TodoItems" AlternatingRowBackground="Gray" CanUserAddRows="False">
-            
+        <DataGrid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TodoItems" CanUserAddRows="False" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}" Width="*"/>
+                <DataGridTextColumn Header="Created At" Binding="{Binding Path=CreatedAt}" IsReadOnly="True" Width="*"/>
+                <DataGridCheckBoxColumn Header="Is Completed" Binding="{Binding Completed, UpdateSourceTrigger=PropertyChanged}" Width="*" />
+            </DataGrid.Columns>
         </DataGrid>
     </Grid>
 </Window>

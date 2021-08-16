@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Todo.Database.Extensions;
 
 namespace Todo.Database.Abstracts
 {
@@ -26,6 +27,11 @@ namespace Todo.Database.Abstracts
             return _context.SaveChangesAsync();
         }
 
+        public Task<TEntity> GetSingleAsync(Guid key)
+        {
+            return Entities.AsNoTracking().SingleOrDefaultAsync(e => e.Id.Equals(key));
+        }
+
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
         {
             _dbSet.Add(entity);
@@ -35,6 +41,7 @@ namespace Todo.Database.Abstracts
 
         public virtual Task UpdateAsync(TEntity entity)
         {
+            _context.DetachLocal(entity);
             _dbSet.Update(entity);
             return _context.SaveChangesAsync();
         }
