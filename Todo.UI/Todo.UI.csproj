@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Todo.Database\Todo.Database.csproj" />
     <ProjectReference Include="..\Todo.Library\Todo.Library.csproj" />
   </ItemGroup>

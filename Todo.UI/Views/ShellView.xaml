@@ -17,8 +17,6 @@
             <RowDefinition Height="20" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
@@ -29,5 +27,10 @@
         <!-- Row 2 -->
         <TextBox Grid.Row="2" Grid.Column="1" x:Name="Title" MinWidth="250" />
         <Button Grid.Row="2" Grid.Column="2" Content="Add Todo" x:Name="AddTodo" />
+        
+        <!-- Row 3 -->
+        <DataGrid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TodoItems" AlternatingRowBackground="Gray" CanUserAddRows="False">
+            
+        </DataGrid>
     </Grid>
 </Window>

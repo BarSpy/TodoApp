@@ -1,16 +1,20 @@
 ﻿using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Todo.Database;
 using Todo.Library.Abstracts;
+using Todo.UI.Models;
 
 namespace Todo.UI.ViewModels
 {
     public class ShellViewModel : Conductor<object>
     {
+        public BindableCollection<TodoItemModel> TodoItems { get; set; }
+
         private string _title = "Walk a dog...";
 
         public string Title
@@ -24,7 +28,11 @@ namespace Todo.UI.ViewModels
         public DateTime Target
         {
             get { return _target; }
-            set { _target = value; }
+            set 
+            { 
+                _target = value;
+                LoadTodoItems();
+            }
         }
 
         private readonly ITodoItemsService _todoItemsService;
@@ -32,13 +40,30 @@ namespace Todo.UI.ViewModels
         public ShellViewModel(ITodoItemsService todoItemsService)
         {
             _todoItemsService = todoItemsService;
-            var items = _todoItemsService.Entities.ToList();
+            LoadTodoItems();
         }
 
-        public async Task AddTodo()
+        public bool CanAddTodo(string title)
+        {
+            return string.IsNullOrWhiteSpace(Title) == false;
+        }
+
+        public async Task AddTodo(string title)
         {
             var todo = new TodoItem(title: Title, target: Target);
             await _todoItemsService.InsertAsync(todo);
+            TodoItems.Add(new TodoItemModel(todo));
+            NotifyOfPropertyChange(() => TodoItems);
+        }
+
+        private void LoadTodoItems()
+        {
+            var items = _todoItemsService
+                .GetAllForDate(Target)
+                .Select(dbItem => new TodoItemModel(dbItem));
+
+            TodoItems = new BindableCollection<TodoItemModel>(items);
+            NotifyOfPropertyChange(() => TodoItems);
         }
     }
 }
