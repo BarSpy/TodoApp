@@ -46,7 +46,7 @@
                 <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}" Width="*"/>
                 <DataGridTextColumn Header="Created At" Binding="{Binding Path=CreatedAt}" IsReadOnly="True" Width="*"/>
                 <DataGridCheckBoxColumn Header="Is Completed" Binding="{Binding Completed, UpdateSourceTrigger=PropertyChanged}" Width="*" />
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Delete" cal:Message.Attach="[Event Click]=[Delete($dataContext)]" />

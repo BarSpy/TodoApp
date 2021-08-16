@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Todo.Database
@@ -13,8 +16,11 @@ namespace Todo.Database
 
         public DatabaseContext()
         {
-            DbPath = $@".\todo.db";
-            Database.EnsureCreated();
+            var folder = Environment.SpecialFolder.LocalApplicationData;
+            var path = Environment.GetFolderPath(folder);
+            Directory.CreateDirectory($"{path}{Path.DirectorySeparatorChar}TodoApp");
+            DbPath = $@"{path}{Path.DirectorySeparatorChar}TodoApp{Path.DirectorySeparatorChar}todo.db";
+            Database.Migrate();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
