@@ -21,7 +21,11 @@ namespace Todo.UI.ViewModels
         public string Title
         {
             get { return _title; }
-            set { _title = value; }
+            set 
+            {
+                _title = value;
+                NotifyOfPropertyChange(() => Title);
+            }
         }
 
         private DateTime _target = DateTime.UtcNow;
@@ -56,6 +60,7 @@ namespace Todo.UI.ViewModels
             var todoModel = new TodoItemModel(todo);
             todoModel.PropertyChanged += PropChanged;
             TodoItems.Add(todoModel);
+            Title = string.Empty;
         }
 
         public void Delete(object item)
