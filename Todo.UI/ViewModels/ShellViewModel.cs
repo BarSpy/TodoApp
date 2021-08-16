@@ -53,8 +53,19 @@ namespace Todo.UI.ViewModels
         {
             var todo = new TodoItem(title: Title, target: Target);
             await _todoItemsService.InsertAsync(todo);
-            TodoItems.Add(new TodoItemModel(todo));
-            NotifyOfPropertyChange(() => TodoItems);
+            var todoModel = new TodoItemModel(todo);
+            todoModel.PropertyChanged += PropChanged;
+            TodoItems.Add(todoModel);
+        }
+
+        public void Delete(object item)
+        {
+            if (item is TodoItemModel todoItem)
+            {
+                var dbItem = _todoItemsService.GetSingleAsync(todoItem.Id).Result;
+                _todoItemsService.DeleteAsync(dbItem).Wait();
+                TodoItems.Remove(todoItem);
+            }
         }
 
         private void LoadTodoItems()
@@ -80,7 +91,7 @@ namespace Todo.UI.ViewModels
                 var dbItem = _todoItemsService.GetSingleAsync(item.Id).Result;
                 dbItem.Completed = item.Completed;
                 dbItem.Title = item.Title;
-                _todoItemsService.UpdateAsync(dbItem).GetAwaiter().GetResult();
+                _todoItemsService.UpdateAsync(dbItem).Wait();
             }
         }
     }

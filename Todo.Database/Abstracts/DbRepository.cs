@@ -23,13 +23,14 @@ namespace Todo.Database.Abstracts
 
         public virtual Task DeleteAsync(TEntity entity)
         {
+            _context.DetachLocal(entity);
             _dbSet.Remove(entity);
             return _context.SaveChangesAsync();
         }
 
         public Task<TEntity> GetSingleAsync(Guid key)
         {
-            return Entities.AsNoTracking().SingleOrDefaultAsync(e => e.Id.Equals(key));
+            return Entities.SingleOrDefaultAsync(e => e.Id.Equals(key));
         }
 
         public virtual async Task<TEntity> InsertAsync(TEntity entity)
