@@ -13,7 +13,8 @@ namespace Todo.Database
 
         public DatabaseContext()
         {
-            DbPath = $"todo.db";
+            DbPath = $@".\todo.db";
+            Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
