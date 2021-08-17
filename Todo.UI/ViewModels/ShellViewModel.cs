@@ -6,22 +6,33 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Todo.Database;
 using Todo.Library.Abstracts;
 using Todo.UI.Models;
 
 namespace Todo.UI.ViewModels
 {
-    public class ShellViewModel : Conductor<object>
+    public class ShellViewModel : Screen
     {
-        public BindableCollection<TodoItemModel> TodoItems { get; set; }
+        public TodoItemModel SelectedTodo { get; set; }
+
+        private BindableCollection<TodoItemModel> _todoItems;
+        public BindableCollection<TodoItemModel> TodoItems
+        {
+            get { return _todoItems; }
+            set
+            {
+                _todoItems = value;
+                NotifyOfPropertyChange(() => TodoItems);
+            }
+        }
 
         private string _title = "Walk a dog...";
-
         public string Title
         {
             get { return _title; }
-            set 
+            set
             {
                 _title = value;
                 NotifyOfPropertyChange(() => Title);
@@ -29,7 +40,6 @@ namespace Todo.UI.ViewModels
         }
 
         private DateTime _target = DateTime.UtcNow;
-
         public DateTime Target
         {
             get { return _target; }
@@ -55,27 +65,59 @@ namespace Todo.UI.ViewModels
 
         public async Task AddTodo(string title)
         {
-            var todo = new TodoItem(title: Title, target: Target);
-            await _todoItemsService.InsertAsync(todo);
-            var todoModel = new TodoItemModel(todo);
-            todoModel.PropertyChanged += PropChanged;
-            TodoItems.Add(todoModel);
-            Title = string.Empty;
+            try
+            {
+                var todo = new TodoItem(title: Title, target: Target);
+                await _todoItemsService.InsertAsync(todo);
+                var todoModel = new TodoItemModel(todo);
+                todoModel.PropertyChanged += PropChanged;
+                TodoItems.Add(todoModel);
+                Title = string.Empty;
+            }
+            catch
+            {
+                MessageBox.Show("An error occured while saving a todo. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void Delete(object item)
         {
-            if (item is TodoItemModel todoItem)
+            try
             {
-                var dbItem = _todoItemsService.GetSingleAsync(todoItem.Id).Result;
-                _todoItemsService.DeleteAsync(dbItem).Wait();
-                TodoItems.Remove(todoItem);
+                if (item is TodoItemModel todoItem)
+                {
+                    var dbItem = _todoItemsService.GetSingleAsync(todoItem.Id).Result;
+                    _todoItemsService.DeleteAsync(dbItem).Wait();
+                    TodoItems.Remove(todoItem);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("An error occured while deleting a todo. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public void SwitchCompletionLevel(object item)
+        {
+            try
+            {
+                if (SelectedTodo != null)
+                {
+                    var dbItem = _todoItemsService.GetSingleAsync(SelectedTodo.Id).Result;
+                    dbItem.Completed = !dbItem.Completed;
+                    _todoItemsService.UpdateAsync(dbItem).Wait();
+                    SelectedTodo.Completed = dbItem.Completed;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("An error occured while switching a todo status. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void LoadTodoItems()
         {
-            var items = _todoItemsService
+            IEnumerable<TodoItemModel> items = _todoItemsService
                 .GetAllForDate(Target)
                 .ToList()
                 .Select(dbItem => new TodoItemModel(dbItem))
@@ -86,17 +128,22 @@ namespace Todo.UI.ViewModels
                 });
 
             TodoItems = new BindableCollection<TodoItemModel>(items);
-            NotifyOfPropertyChange(() => TodoItems);
         }
 
         private void PropChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (sender is TodoItemModel item)
+            try
             {
-                var dbItem = _todoItemsService.GetSingleAsync(item.Id).Result;
-                dbItem.Completed = item.Completed;
-                dbItem.Title = item.Title;
-                _todoItemsService.UpdateAsync(dbItem).Wait();
+                if (sender is TodoItemModel item)
+                {
+                    var dbItem = _todoItemsService.GetSingleAsync(item.Id).Result;
+                    dbItem.Title = item.Title;
+                    _todoItemsService.UpdateAsync(dbItem).Wait();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("An error occured while updating a todo title. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

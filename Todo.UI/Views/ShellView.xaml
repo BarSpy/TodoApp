@@ -23,6 +23,7 @@
             <Setter Property="Foreground" Value="Blue"/>
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="0,0,10,0" />
         </Style>
     </Window.Resources>
     
@@ -50,11 +51,19 @@
         <Button Grid.Row="2" Grid.Column="2" Content="Add Todo" x:Name="AddTodo" Margin="0,0,0,10" Height="35" />
         
         <!-- Row 3 -->
-        <DataGrid Grid.Row="3" FontSize="12" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TodoItems" CanUserAddRows="False" AutoGenerateColumns="False">
+        <DataGrid Grid.Row="3" FontSize="12" Grid.Column="1" Grid.ColumnSpan="2" x:Name="TodoItems" CanUserAddRows="False" AutoGenerateColumns="False" 
+                  cal:Message.Attach="[Event MouseDoubleClick] = [Action SwitchCompletionLevel($dataContext)]" 
+                  SelectedItem="{Binding SelectedTodo,Mode=OneWayToSource}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}" Width="*" />
+                <DataGridCheckBoxColumn Header="Completed" Binding="{Binding Completed}" Width="auto" IsReadOnly="true" />
+                <DataGridTextColumn Header="Title" Binding="{Binding Path=Title}" Width="*">
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="TextBox">
+                            <Setter Property="MaxLength" Value="50"/>
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Created At" Binding="{Binding Path=CreatedAt}" IsReadOnly="True" Width="auto"/>
-                <DataGridCheckBoxColumn Header="Completed" Binding="{Binding Completed, UpdateSourceTrigger=PropertyChanged}" Width="auto" />
                 <DataGridTemplateColumn Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
