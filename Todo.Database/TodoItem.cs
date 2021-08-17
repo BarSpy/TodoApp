@@ -14,9 +14,6 @@ namespace Todo.Database
         [Required(AllowEmptyStrings = false), MaxLength(50)]
         public string Title { get; set; }
 
-        [MaxLength(255)]
-        public string Description { get; set; }
-
         public bool Completed { get; set; } = false;
 
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
